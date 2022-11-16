@@ -80,7 +80,7 @@ class Trainer(nn.Module):
             print('Loaded ' + path)
         return self
 
-    def load_checkpoint_rename(self, tag=None, path=None, rename='model.module', remove='model' **kwargs):
+    def load_checkpoint_rename(self, tag=None, path=None, rename='model.module', remove='model', **kwargs):
         assert tag is None or path is None, "please provide either tag or path or nothing, not both"
         if tag is None and path is None:
             path = get_latest_file(os.path.join(self.experiment_path, 'checkpoint_temp_[0-9]*.pth'))
