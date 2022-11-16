@@ -80,6 +80,30 @@ class Trainer(nn.Module):
             print('Loaded ' + path)
         return self
 
+    def load_checkpoint_rename(self, tag=None, path=None, rename='model.module', remove='model' **kwargs):
+        assert tag is None or path is None, "please provide either tag or path or nothing, not both"
+        if tag is None and path is None:
+            path = get_latest_file(os.path.join(self.experiment_path, 'checkpoint_temp_[0-9]*.pth'))
+        elif tag is not None and path is None:
+            path = os.path.join(self.experiment_path, "checkpoint_{}.pth".format(tag))
+        checkpoint = torch.load(path)
+
+        remove_num = len(remove)
+
+        new_state_dict = OrderedDict()
+        for k, v in checkpoint.items():
+            name = k[remove_num:] # remove `module.`
+            name = rename + name #add rename to name
+            new_state_dict[name] = v
+
+        self.load_state_dict(new_state_dict['model'], **kwargs)
+        self.opt.load_state_dict(checkpoint['opt'])
+        self.step = int(checkpoint['step'])
+
+        if self.verbose:
+            print('Loaded ' + path)
+        return self
+
     def average_checkpoints(self, tags=None, paths=None, out_tag='avg', out_path=None):
         assert tags is None or paths is None, "please provide either tags or paths or nothing, not both"
         assert out_tag is not None or out_path is not None, "please provide either out_tag or out_path or both, not nothing"
