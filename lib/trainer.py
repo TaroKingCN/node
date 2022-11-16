@@ -74,7 +74,7 @@ class Trainer(nn.Module):
 
         self.load_state_dict(checkpoint['model'], **kwargs)
         self.opt.load_state_dict(checkpoint['opt'])
-        # self.step = int(checkpoint['step'])
+        self.step = int(checkpoint['step'])
 
         if self.verbose:
             print('Loaded ' + path)
@@ -88,9 +88,6 @@ class Trainer(nn.Module):
             path = os.path.join(self.experiment_path, "checkpoint_{}.pth".format(tag))
         checkpoint = torch.load(path)
 
-
-        print(checkpoint)
-
         remove_num = len(remove)
 
         new_state_dict = OrderedDict()
@@ -98,7 +95,6 @@ class Trainer(nn.Module):
             name = k[remove_num:] # remove `module.`
             name = rename + name #add rename to name
             new_state_dict[name] = v
-
     
         self.load_state_dict(new_state_dict['model'], **kwargs)
         self.opt.load_state_dict(checkpoint['opt'])
