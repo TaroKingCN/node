@@ -74,7 +74,7 @@ class Trainer(nn.Module):
 
         self.load_state_dict(checkpoint['model'], **kwargs)
         self.opt.load_state_dict(checkpoint['opt'])
-        self.step = int(checkpoint['step'])
+        # self.step = int(checkpoint['step'])
 
         if self.verbose:
             print('Loaded ' + path)
